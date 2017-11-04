@@ -1,0 +1,16 @@
+export const color1 = '#ada7fc';
+export const color2 = '#d187ef';
+export const color3 = '#fda6f8';
+export const color4 = '#ec6f86';
+export const color5 = '#fe816d';
+export const color6 = '#ffba6d';
+export const color7 = '#ffdd75';
+export const color8 = '#daff75';
+export const color9 = '#b2f068';
+export const color10 = '#9ff3c3';
+export const color11 = '#6aecf4';
+export const color12 = '#45b4e7';
+export const color13 = '#4573e7';
+export const color14 = '#7e69ff';
+export const color15 = '#ad61ed';
+export const color16 = '#4d4d4d';
