@@ -5,15 +5,22 @@ import {
   Dimensions,
   TouchableOpacity,
   StyleSheet,
+  CameraRoll,
 } from 'react-native';
 
 class ResultImage extends React.Component {
+  saveImage = async (uri) => {
+    const result = await CameraRoll.saveToCameraRoll(uri);
+    console.log(result);
+  }
+
   renderResult = () => {
     if (this.props.image !== null) {
+      const uri = `data:image/png;base64,${this.props.image}`;
       return (
-        <TouchableOpacity key="image">
+        <TouchableOpacity key="image" onPress={() => this.saveImage(uri)}>
           <Image
-            source={{ uri: `data:image/png;base64,${this.props.image}` }}
+            source={{ uri }}
             style={styles.image}
           />
         </TouchableOpacity>
