@@ -9,6 +9,7 @@ import DrawBoard from './components/DrawBoard';
 import ResultImage from './components/ResultImage';
 import Header from './components/Header';
 import ColorPalette from './components/ColorPalette';
+import * as Colors from 'utils/colors';
 
 class App extends Component {
   constructor() {
@@ -16,7 +17,7 @@ class App extends Component {
 
     this.state = {
       result: null,
-      color: 'black',
+      color: Colors.color13,
       strokeWidth: 4,
     };
 
@@ -82,7 +83,7 @@ class App extends Component {
           isRedoDisabled={this.isRedoDisabled()}
           cancel={this.onCancel}
         />
-        <ColorPalette onPress={this.onChangeColor} />
+        <ColorPalette onPress={this.onChangeColor} selected={this.state.color} />
         <View style={{ alignItems: 'center' }}>
           <DrawBoard
             ref={(view) => { this.drawBoard = view; }}

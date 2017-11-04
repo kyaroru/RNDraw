@@ -6,12 +6,17 @@ import {
   TouchableOpacity,
   StyleSheet,
   CameraRoll,
+  Platform,
 } from 'react-native';
 
 class ResultImage extends React.Component {
   saveImage = async (uri) => {
-    const result = await CameraRoll.saveToCameraRoll(uri);
-    console.log(result);
+    if (Platform.OS === 'ios') {
+      const result = await CameraRoll.saveToCameraRoll(uri);
+      console.log(result);
+    } else {
+      console.log('not yet implement');
+    }
   }
 
   renderResult = () => {
