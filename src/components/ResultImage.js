@@ -4,57 +4,18 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
+  View,
   StyleSheet,
-  CameraRoll,
-  Platform,
 } from 'react-native';
-
-class ResultImage extends React.Component {
-  saveImage = async (uri) => {
-    if (Platform.OS === 'ios') {
-      const result = await CameraRoll.saveToCameraRoll(uri);
-      console.log(result);
-    } else {
-      console.log('not yet implement');
-    }
-  }
-
-  renderResult = () => {
-    if (this.props.image !== null) {
-      const uri = `data:image/png;base64,${this.props.image}`;
-      return (
-        <TouchableOpacity key="image" onPress={() => this.saveImage(uri)}>
-          <Image
-            source={{ uri }}
-            style={styles.image}
-          />
-        </TouchableOpacity>
-      );
-    }
-
-    return null;
-  }
-
-  render() {
-    return (
-      <ScrollView
-        directionalLockEnabled
-        horizontal
-      >
-        {this.renderResult()}
-      </ScrollView>
-    );
-  }
-}
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
     height: Dimensions.get('window').width / 3,
   },
-
   image: {
     width: Dimensions.get('window').width / 3,
     height: Dimensions.get('window').width / 3,
@@ -68,6 +29,70 @@ const styles = StyleSheet.create({
     margin: 10,
     marginRight: 0,
   },
+  icon: {
+    fontSize: 20,
+    margin: 5,
+    color: '#c6c6c6',
+  },
+  iconLeft: {
+    position: 'absolute',
+    left: 20,
+    top: 20,
+  },
+  iconRight: {
+    position: 'absolute',
+    right: 10,
+    top: 20,
+  },
 });
+
+class ResultImage extends React.Component {
+  renderImage = (image, index) => {
+    if (image !== null) {
+      const uri = `data:image/png;base64,${image}`;
+      return (
+        <View key={`image-${index}`}>
+          <Image
+            source={{ uri }}
+            style={styles.image}
+          />
+          <TouchableOpacity style={styles.iconLeft} onPress={() => this.props.saveImageToDevice(uri)}>
+            <Icon
+              name="save"
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconRight} onPress={() => this.props.removeImage(image)}>
+            <Icon
+              name="trash"
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+        </View>
+      );
+    }
+
+    return null;
+  }
+
+  renderImages() {
+    const { images } = this.props;
+    if (images.length > 0) {
+      return images.map((image, index) => this.renderImage(image, index));
+    }
+    return null;
+  }
+
+  render() {
+    return (
+      <ScrollView
+        directionalLockEnabled
+        horizontal
+      >
+        {this.renderImages()}
+      </ScrollView>
+    );
+  }
+}
 
 export default ResultImage;

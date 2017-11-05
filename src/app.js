@@ -2,21 +2,24 @@ import React, { Component } from 'react';
 import {
   View,
   Dimensions,
+  CameraRoll,
+  Platform,
 } from 'react-native';
 import Actions from 'actions';
 import { connect } from 'react-redux';
+import * as Colors from 'utils/colors';
+import { alert, confirmation } from 'utils/alert';
 import DrawBoard from './components/DrawBoard';
 import ResultImage from './components/ResultImage';
 import Header from './components/Header';
 import ColorPalette from './components/ColorPalette';
-import * as Colors from 'utils/colors';
 
 class App extends Component {
   constructor() {
     super();
 
     this.state = {
-      result: null,
+      results: [],
       color: Colors.color13,
       strokeWidth: 4,
     };
@@ -28,8 +31,11 @@ class App extends Component {
   }
 
   onCancel = () => {
-    this.props.resetPath();
-    this.setState({ result: null });
+    const onComplete = () => {
+      this.props.resetPath();
+      this.setState({ results: [] });
+    };
+    confirmation('Hmm', 'Confirm Clear? This will clear the drawing and remove all the pictures below.', 'Yes', 'No', onComplete);
   }
 
   onUndo = () => {
@@ -50,10 +56,39 @@ class App extends Component {
   }
 
   onSave = async () => {
+    const { results } = this.state;
     const onComplete = (result) => {
-      this.setState({ result });
+      const newResults = [
+        ...results,
+        result,
+      ];
+      this.setState({ results: newResults });
     };
     this.svgView.toDataURL(onComplete);
+  }
+
+  onRemoveImage = (uri) => {
+    const { results } = this.state;
+    const newResults = results.filter(item => item !== uri);
+    this.setState({ results: newResults });
+  }
+
+  onSaveImageToDevice = async (uri) => {
+    if (Platform.OS === 'ios') {
+      const result = await CameraRoll.saveToCameraRoll(uri);
+      // result contain actual uri of the image after saved
+      alert('Success', 'Your drawing has been saved to device');
+    } else {
+      alert('Opps', 'Save Drawing to Android device has not implemented');
+    }
+  }
+
+  isSaveDisabled = () => {
+    const { paths } = this.props;
+    if (paths.length === 0) {
+      return true;
+    }
+    return false;
   }
 
   isUndoDisabled = () => {
@@ -77,6 +112,7 @@ class App extends Component {
       <View>
         <Header
           save={this.onSave}
+          isSaveDisabled={this.isSaveDisabled()}
           undo={this.onUndo}
           isUndoDisabled={this.isUndoDisabled()}
           redo={this.onRedo}
@@ -96,7 +132,11 @@ class App extends Component {
             strokeWidth={this.state.strokeWidth}
           />
         </View>
-        <ResultImage image={this.state.result} />
+        <ResultImage
+          images={this.state.results}
+          removeImage={this.onRemoveImage}
+          saveImageToDevice={this.onSaveImageToDevice}
+        />
       </View>
     );
   }

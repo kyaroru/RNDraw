@@ -16,7 +16,7 @@ if (__DEV__) {
   });
   middleware = applyMiddleware(logger);
 } else {
-  middleware = null;
+  middleware = applyMiddleware();
 }
 
 export const getStore = () => store;

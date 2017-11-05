@@ -47,6 +47,7 @@ class Header extends Component {
           <IconButton
             onPress={this.props.save}
             name="check"
+            disabled={this.props.isSaveDisabled}
           />
           <IconButton
             onPress={this.props.cancel}

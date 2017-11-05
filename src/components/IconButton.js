@@ -4,7 +4,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 const styles = StyleSheet.create({
   icon: {
-    color: '#999',
     fontSize: 20,
     margin: 5,
   },
@@ -13,13 +12,10 @@ const styles = StyleSheet.create({
 class IconButton extends React.Component {
   render() {
     return (
-      <TouchableOpacity
-        style={styles.iconButton}
-        onPress={this.props.disabled ? null : this.props.onPress}
-      >
+      <TouchableOpacity onPress={this.props.disabled ? null : this.props.onPress}>
         <Icon
           name={this.props.name}
-          style={[styles.icon, { color: this.props.disabled ? 'gray' : 'blue' }]}
+          style={[this.props.style || styles.icon, { color: this.props.disabled ? 'gray' : 'blue' }]}
         />
       </TouchableOpacity>
     );
