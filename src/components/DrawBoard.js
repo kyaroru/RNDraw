@@ -6,19 +6,19 @@ import {
 } from 'react-native';
 import Svg, { G, Path } from 'react-native-svg';
 import Reaction from './Reaction';
+import * as Colors from 'themes/colors';
 
 const styles = StyleSheet.create({
   drawContainer: {
     borderWidth: 1,
     borderRadius: 2,
-    borderColor: '#ddd',
+    borderColor: Colors.nearWhite,
     borderBottomWidth: 0,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 1,
   },
-
   drawSurface: {
     backgroundColor: 'transparent',
   },
@@ -63,7 +63,7 @@ export default class DrawBoard extends Component {
 
   onResponderRelease() {
     let path;
-    if (this.state.currentPoints.length > 0) {
+    if (this.state.currentPoints && this.state.currentPoints.length > 0) {
       path = (<Path
         key={this.state.currentMax}
         d={this.state.reaction.pointsToSvg(this.state.currentPoints)}
@@ -108,7 +108,7 @@ export default class DrawBoard extends Component {
             <G>
               {this.props.donePaths}
               <Path
-                key={this.state.currentMax}
+                key="new"
                 d={this.state.reaction.pointsToSvg(this.state.currentPoints)}
                 stroke={this.props.color}
                 strokeWidth={this.props.strokeWidth - 1}

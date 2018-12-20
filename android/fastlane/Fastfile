@@ -1,0 +1,110 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+  lane :bump_version_code do
+    path = '../app/build.gradle'
+    re = /versionCode\s+(\d+)/
+
+    s = File.read(path)
+    currentVersionCode = s[re, 1].to_i
+    puts "Current version code is " + currentVersionCode.to_s
+    versionCode = prompt(text: "Current version code is " + currentVersionCode.to_s + ". Enter new version code: ")
+
+    s[re, 1] = versionCode.to_s
+
+    f = File.new(path, 'w')
+    f.write(s)
+    f.close
+    puts "Version code is now bump to " + versionCode.to_s + " ðŸš€"
+  end
+
+  lane :bump_version_name do
+    path = '../app/build.gradle'
+    re = /versionName\s+("\d\.\d\.\d")/
+
+    s = File.read(path)
+    currentVersionName = s[re, 1].to_s
+    versionName = prompt(text: "Current version name is " + currentVersionName + ". Enter new version name without quotes (eg. x.y.z): ")
+    s[re, 1] = '"' + versionName.to_s + '"'
+
+    f = File.new(path, 'w')
+    f.write(s)
+    f.close
+    puts "Version name is now updated to " + versionName
+  end
+
+  desc "Build a version"
+  lane :build do
+    gradle(task: 'clean')
+    gradle(
+      task: 'assemble',
+      build_type: 'Release'
+    )
+    notification(subtitle: "Success Build RNDraw", message: "Success 🎉")
+    # sh "your_script.sh"
+    # You can also use other beta testing services here
+  end
+
+  desc "Submit a new Alpha Build to Google Play Store"
+  lane :alpha do
+    bump_version_code
+    bump_version_name
+    gradle(task: 'clean')
+    gradle(
+      task: 'assemble',
+      build_type: 'Release'
+    )
+    supply(track: 'alpha')
+    notification(subtitle: "Submitted ALPHA build to Google Play Store", message: "Success 🎉")
+    # sh "your_script.sh"
+    # You can also use other beta testing services here
+  end
+
+  desc "Submit a new Beta Build to Google Play Store"
+  lane :beta do
+    bump_version_code
+    bump_version_name
+    gradle(task: 'clean')
+    gradle(
+      task: 'assemble',
+      build_type: 'Release'
+    )
+    supply(track: 'beta')
+    notification(subtitle: "Submitted BETA build to Google Play Store", message: "Success 🎉")
+    # sh "your_script.sh"
+    # You can also use other beta testing services here
+  end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    bump_version_code
+    bump_version_name
+    gradle(task: 'clean')
+    gradle(
+      task: 'assemble',
+      build_type: 'Release'
+    )
+    supply
+    notification(subtitle: "Submitted Production build to Google Play Store", message: "Success 🎉")
+  end
+
+end

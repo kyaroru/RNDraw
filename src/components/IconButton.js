@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import * as Colors from 'themes/colors';
 
 const styles = StyleSheet.create({
   icon: {
@@ -15,7 +16,7 @@ class IconButton extends React.Component {
       <TouchableOpacity onPress={this.props.disabled ? null : this.props.onPress}>
         <Icon
           name={this.props.name}
-          style={[this.props.style || styles.icon, { color: this.props.disabled ? 'gray' : 'blue' }]}
+          style={[this.props.style || styles.icon, { color: this.props.disabled ? Colors.accent : Colors.secondary }]}
         />
       </TouchableOpacity>
     );

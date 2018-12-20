@@ -1,0 +1,57 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  lane :bump_version_number do
+    version_number = get_version_number
+    new_version_number = prompt(text: "Current version number is #{version_number}, please enter new version number: ")
+    increment_version_number(
+      version_number: new_version_number
+    )
+    new_version_number
+  end
+
+  lane :bump_build_number do
+    build_number = get_build_number
+    new_build_number = prompt(text: "Current build number is #{build_number}, please enter new build number: ")
+    increment_build_number(
+      build_number: new_build_number
+    )
+    new_build_number
+  end
+
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    new_version_number = bump_version_number
+    new_build_number = bump_build_number
+    get_certificates           # invokes cert
+    get_provisioning_profile   # invokes sigh
+    build_app(scheme: "RNDraw")
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+    notification(subtitle: "RNDraw iOS Submit to TestFlight", message: "Success")
+  end
+
+  lane :release do
+    new_version_number = bump_version_number
+    new_build_number = bump_build_number
+    get_certificates           # invokes cert
+    get_provisioning_profile   # invokes sigh
+    build_app(scheme: "RNDraw")
+    upload_to_app_store                  # upload your app to App Store Connect
+    notification(subtitle: "RNDraw iOS Submit to App Store", message: "Success")
+  end
+end

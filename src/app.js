@@ -73,16 +73,6 @@ class App extends Component {
     this.setState({ results: newResults });
   }
 
-  onSaveImageToDevice = async (uri) => {
-    if (Platform.OS === 'ios') {
-      const result = await CameraRoll.saveToCameraRoll(uri);
-      // result contain actual uri of the image after saved
-      alert('Success', 'Your drawing has been saved to device');
-    } else {
-      alert('Opps', 'Save Drawing to Android device has not implemented');
-    }
-  }
-
   isSaveDisabled = () => {
     const { paths } = this.props;
     if (paths.length === 0) {
@@ -135,7 +125,6 @@ class App extends Component {
         <ResultImage
           images={this.state.results}
           removeImage={this.onRemoveImage}
-          saveImageToDevice={this.onSaveImageToDevice}
         />
       </View>
     );

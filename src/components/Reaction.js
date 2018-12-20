@@ -20,15 +20,14 @@ class Reaction {
   pointsToSvg(points) {
     const offsetX = this.offsetX;
     const offsetY = this.offsetY;
-
-    if (points.length > 0) {
+    if (points && points.length > 0) {
       let path = `M ${points[0].x - offsetX},${points[0].y - offsetY}`;
       points.forEach((point) => {
         path = `${path} L ${point.x - offsetX},${point.y - offsetY}`;
       });
       return path;
     }
-    return '';
+    return 'M 0.0, 0.0 L 0.0, 0.0';
   }
 
   replayLength() {

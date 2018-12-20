@@ -1,22 +1,23 @@
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Platform } from 'react-native';
+import * as ColorsApp from 'themes/colors';
 import * as Colors from 'utils/colors';
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    backgroundColor: '#FFF',
+    justifyContent: 'center',
+    backgroundColor: ColorsApp.white,
     borderBottomWidth: 1,
-    borderColor: '#DDD',
+    borderColor: ColorsApp.nearWhite,
     paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
   },
   option: {
-    width: Platform.OS === 'ios' ? 25 : 20,
-    height: Platform.OS === 'ios' ? 25 : 20,
-    borderRadius: Platform.OS === 'ios' ? 12.5 : 10,
+    width: 25,
+    height: 25,
+    borderRadius: 12.5,
     marginVertical: 5,
     marginHorizontal: 10,
   },
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
 class ColorPalette extends React.Component {
   getBorderColor(color) {
     const { selected } = this.props;
-    return color === this.props.selected ? 'black' : color;
+    return color === this.props.selected ? ColorsApp.primary : color;
   }
 
   renderOptions() {
