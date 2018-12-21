@@ -68,6 +68,10 @@ class Header extends Component {
             onPress={this.props.cancel}
             name="remove"
           />
+          {Platform.OS === 'android' && <IconButton
+            onPress={this.props.setting}
+            name="cogs"
+          />}
         </View>
       </View>
     );

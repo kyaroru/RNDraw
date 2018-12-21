@@ -32,7 +32,6 @@ const styles = StyleSheet.create({
   image: {
     width: Dimensions.get('window').width / 3,
     height: Dimensions.get('window').width / 3,
-    backgroundColor: '#fff',
   },
   icon: {
     fontSize: 20,
@@ -56,8 +55,8 @@ const styles = StyleSheet.create({
 
 class ResultImage extends React.Component {
   saveImageToDevice = async (data) => {
-    if (Platform.OS === 'android') {
-      this.refs.viewShot.capture().then(uri => {
+    this.refs.viewShot.capture().then(uri => {
+      if (Platform.OS === 'android') {
         PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE).then((isGranted) => {
           if (isGranted) {
             CameraRoll.saveToCameraRoll(uri).then((result) => {
@@ -66,40 +65,51 @@ class ResultImage extends React.Component {
             });
           }
         });
-      });
-    } else {
-      CameraRoll.saveToCameraRoll(data, 'photo').then((result) => {
-        // result contain actual uri of the image after saved
-        alert('Success', 'Your drawing has been saved to device');
-      });
-    }
+      } else {
+        CameraRoll.saveToCameraRoll(data).then((result) => {
+          // result contain actual uri of the image after saved
+          alert('Success', 'Your drawing has been saved to device');
+        });
+      }
+    });
   }
 
   renderImage = (image, index) => {
+    const { saveWithBackground } = this.props;
     if (image !== null) {
       const uri = `data:image/png;base64,${image}`;
       return (
         <View key={`image-${index}`}>
           <View style={styles.imageContainer}>
-            <ViewShot ref="viewShot" options={{ format: "png", quality: 1 }}>
-              <Image
-                source={{ uri }}
-                style={styles.image}
-              />
-            </ViewShot>
+            {saveWithBackground &&
+              <ViewShot ref="viewShot" options={{ format: "png", quality: 1 }}>
+                <Image
+                  source={{ uri }}
+                  style={[styles.image, { backgroundColor: Colors.white }]}
+                />
+              </ViewShot>
+            }
+            {!saveWithBackground &&
+              <ViewShot ref="viewShot" options={{ format: "png", quality: 1 }}>
+                <Image
+                  source={{ uri }}
+                  style={styles.image}
+                />
+              </ViewShot>
+            }
           </View>
           <TouchableOpacity style={styles.iconLeft} onPress={() => this.saveImageToDevice(uri)}>
-              <Icon
-                name="save"
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconRight} onPress={() => this.props.removeImage(image)}>
-              <Icon
-                name="trash"
-                style={styles.icon}
-              />
-            </TouchableOpacity>
+            <Icon
+              name="save"
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconRight} onPress={() => this.props.removeImage(image)}>
+            <Icon
+              name="trash"
+              style={styles.icon}
+            />
+          </TouchableOpacity>
         </View>
       );
     }

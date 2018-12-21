@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import {
   View,
   Dimensions,
-  CameraRoll,
-  Platform,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Text,
+  Switch,
+  Modal,
+  StyleSheet,
 } from 'react-native';
 import Actions from 'actions';
 import { connect } from 'react-redux';
@@ -12,7 +16,45 @@ import { alert, confirmation } from 'utils/alert';
 import DrawBoard from './components/DrawBoard';
 import ResultImage from './components/ResultImage';
 import Header from './components/Header';
+import Icon from 'react-native-vector-icons/Ionicons';
 import ColorPalette from './components/ColorPalette';
+import * as ColorsApp from 'themes/colors';
+import codePush from "react-native-code-push";
+
+const styles = StyleSheet.create({
+  modal: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: ColorsApp.modalBg,
+    padding: 30,
+  },
+  innerModal: {
+    borderRadius: 10,
+    backgroundColor: ColorsApp.white,
+    padding: 10,
+  },
+  settingHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  settingTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 10,
+  },
+  dismiss: {
+    alignSelf: 'flex-end',
+    zIndex: 20,
+    marginRight: 10,
+  },
+  settingItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+  },
+});
 
 class App extends Component {
   constructor() {
@@ -22,6 +64,8 @@ class App extends Component {
       results: [],
       color: Colors.color13,
       strokeWidth: 4,
+      saveWithBackground: false,
+      isSettingModalVisible: false,
     };
 
     this.onUndo = this.onUndo.bind(this);
@@ -73,6 +117,10 @@ class App extends Component {
     this.setState({ results: newResults });
   }
 
+  openSetting = () => {
+    this.setState({ isSettingModalVisible: true });
+  }
+
   isSaveDisabled = () => {
     const { paths } = this.props;
     if (paths.length === 0) {
@@ -97,7 +145,39 @@ class App extends Component {
     return false;
   }
 
+  renderSettingModal = () => {
+    const { isSettingModalVisible, saveWithBackground } = this.state;
+    const dismiss = () => this.setState({ isSettingModalVisible: false });
+    return (
+      <Modal
+        transparent
+        visible={isSettingModalVisible}
+        onRequestClose={() => {
+          dismiss(); // this modal can be dismiss (some cannot dismiss like fingerprint)
+        }}
+      >
+        <TouchableWithoutFeedback onPress={dismiss}>
+          <View style={styles.modal}>
+            <View style={styles.innerModal}>
+              <View style={styles.settingHeader}>
+                <Text style={styles.settingTitle}>Setting</Text>
+                <TouchableOpacity style={styles.dismiss} onPress={dismiss}>
+                  <Icon name="ios-close" size={30} color={Colors.secondary} style={styles.icon} />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.settingItem}>
+                <Text style={styles.settingLabel}>Save with background</Text>
+                <Switch value={saveWithBackground} onValueChange={() => this.setState({ saveWithBackground: !saveWithBackground })} />
+              </View>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+    )
+  }
+
   render() {
+    const { saveWithBackground } = this.state;
     return (
       <View>
         <Header
@@ -108,6 +188,7 @@ class App extends Component {
           redo={this.onRedo}
           isRedoDisabled={this.isRedoDisabled()}
           cancel={this.onCancel}
+          setting={this.openSetting}
         />
         <ColorPalette onPress={this.onChangeColor} selected={this.state.color} />
         <View style={{ alignItems: 'center' }}>
@@ -125,7 +206,9 @@ class App extends Component {
         <ResultImage
           images={this.state.results}
           removeImage={this.onRemoveImage}
+          saveWithBackground={saveWithBackground}
         />
+        {this.renderSettingModal()}
       </View>
     );
   }
@@ -147,4 +230,6 @@ const mapDispatchToProps = {
   redoPath: Actions.redoPath,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+const MyApp = connect(mapStateToProps, mapDispatchToProps)(App);
+let codePushOptions = { checkFrequency: codePush.CheckFrequency.ON_APP_RESUME };
+export default codePush(codePushOptions)(MyApp);

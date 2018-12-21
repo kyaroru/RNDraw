@@ -7,7 +7,7 @@
 
 #import "AppDelegate.h"
 #import <CodePush/CodePush.h>
-
+#import <React/RCTLog.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
@@ -15,6 +15,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  RCTSetLogThreshold(RCTLogLevelInfo);
   NSURL *jsCodeLocation;
 
   #ifdef DEBUG
