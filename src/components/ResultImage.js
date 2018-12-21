@@ -58,13 +58,14 @@ class ResultImage extends React.Component {
   saveImageToDevice = async (data) => {
     if (Platform.OS === 'android') {
       this.refs.viewShot.capture().then(uri => {
-        const isGranted = PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
-        if (isGranted) {
-          CameraRoll.saveToCameraRoll(uri).then((result) => {
-            // result contain actual uri of the image after saved
-            alert('Success', 'Your drawing has been saved to device');
-          });
-        }
+        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE).then((isGranted) => {
+          if (isGranted) {
+            CameraRoll.saveToCameraRoll(uri).then((result) => {
+              // result contain actual uri of the image after saved
+              alert('Success', 'Your drawing has been saved to device');
+            });
+          }
+        });
       });
     } else {
       CameraRoll.saveToCameraRoll(data, 'photo').then((result) => {

@@ -1,0 +1,8 @@
+RNDraw is a simple drawing app built using pure ReactNative + Redux + RN SVG
+
+Features:
+- Draw using different colours
+- Able to undo & redo
+- Able to save drawing to device
+
+It is open source and can be found on GitHub: https://www.github.com/kyaroru/RNDraw
