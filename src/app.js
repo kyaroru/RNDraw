@@ -10,16 +10,15 @@ import {
   StyleSheet,
 } from 'react-native';
 import Actions from 'actions';
-import { connect } from 'react-redux';
 import * as Colors from 'utils/colors';
-import { alert, confirmation } from 'utils/alert';
+import { confirmation } from 'utils/alert';
 import DrawBoard from './components/DrawBoard';
 import ResultImage from './components/ResultImage';
+import { connect } from 'react-redux';
 import Header from './components/Header';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ColorPalette from './components/ColorPalette';
 import * as ColorsApp from 'themes/colors';
-import codePush from "react-native-code-push";
 
 const styles = StyleSheet.create({
   modal: {
@@ -230,6 +229,4 @@ const mapDispatchToProps = {
   redoPath: Actions.redoPath,
 };
 
-const MyApp = connect(mapStateToProps, mapDispatchToProps)(App);
-let codePushOptions = { checkFrequency: codePush.CheckFrequency.ON_APP_RESUME };
-export default codePush(codePushOptions)(MyApp);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
